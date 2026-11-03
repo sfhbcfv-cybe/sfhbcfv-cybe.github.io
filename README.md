@@ -1,0 +1,28 @@
+
+{
+  "id": "./",
+  "name": "دولابك لدريم",
+  "short_name": "دولابك",
+  "description": "أطقم الأندية والمنتخبات في مكان واحد",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090909",
+  "theme_color": "#090909",
+  "icons": [
+    {
+      "src": "https://up6.cc/2026/10/179243031175041.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://up6.cc/2026/10/179243031175041.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
