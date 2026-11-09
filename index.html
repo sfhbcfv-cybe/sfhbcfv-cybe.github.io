@@ -3432,35 +3432,30 @@ async function restoreFavoritesFromDB(){
 function isFavorite(name,url){
     return getFavorites().some(item => item.url === url && item.name === name);
 }
+function updateFavoriteStars(name,url,isSaved){
+    // حدّث كل الأزرار المطابقة فوراً دون إعادة رسم صفحة الطقم أو اللوجو.
+    document.querySelectorAll(".favorite-star").forEach(button => {
+        if(button.dataset.favoriteName === name && button.dataset.favoriteUrl === url){
+            button.classList.toggle("is-favorite", isSaved);
+            button.textContent = isSaved ? "★" : "☆";
+            button.setAttribute("aria-label", isSaved ? "إزالة من المفضلة" : "إضافة للمفضلة");
+            button.title = isSaved ? "إزالة من المفضلة" : "إضافة للمفضلة";
+        }
+    });
+}
 function toggleFavorite(name,url){
     const items = getFavorites();
     const index = items.findIndex(item => item.url === url && item.name === name);
-    if(index >= 0) items.splice(index,1);
+    const isSaved = index < 0;
+    if(!isSaved) items.splice(index,1);
     else items.unshift({name,url});
     saveFavorites(items);
-    // تحديث نجوم المعرض الحالي ثم قائمة المفضلة إن كانت مفتوحة
-    if($("teamKits") && $("teamKits").innerHTML) {
-        const active = document.getElementById("teamPage");
-        if(active && active.classList.contains("active")) {
-            const title = $("teamKits").querySelector(".team-head h3");
-            if(title && currentLeague && currentLeague.teams) {
-                const team = currentLeague.teams.find(t => t.name === title.textContent.trim());
-                if(team) openTeam(currentLeague.teams.indexOf(team));
-            }
-        }
-    }
-    const countryPage = document.getElementById("countries");
-    if(countryPage && countryPage.classList.contains("active")) {
-        const heading = $("countryKits")?.querySelector(".team-head h3");
-        if(heading) {
-            const found = countries.find(c => heading.textContent.includes(c.name));
-            if(found) openCountry(countries.indexOf(found));
-        }
-    }
+    updateFavoriteStars(name,url,isSaved);
     renderFavorites();
 }
 function removeFavorite(name,url){
     saveFavorites(getFavorites().filter(item => !(item.name === name && item.url === url)));
+    updateFavoriteStars(name,url,false);
     renderFavorites();
 }
 function openFavoritesPage(){
@@ -3486,7 +3481,7 @@ function renderFavorites(){
              title="اضغط لفتح الطقم أو اللوجو الأصلي"
              onclick="openFavorite('${escapeAttr(item.name)}','${escapeAttr(item.url)}')"
              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openFavorite('${escapeAttr(item.name)}','${escapeAttr(item.url)}')}">
-            <button class="favorite-star is-favorite" title="إزالة من المفضلة" aria-label="إزالة من المفضلة" onclick="event.stopPropagation();removeFavorite('${escapeAttr(item.name)}','${escapeAttr(item.url)}')">★</button>
+            <button class="favorite-star is-favorite" data-favorite-name="${escapeAttr(item.name)}" data-favorite-url="${escapeAttr(item.url)}" title="إزالة من المفضلة" aria-label="إزالة من المفضلة" onclick="event.stopPropagation();removeFavorite('${escapeAttr(item.name)}','${escapeAttr(item.url)}')">★</button>
             <img src="${item.url}" alt="${item.name}" loading="lazy" onerror="this.style.opacity='.35'">
             <div class="kit-name">${item.name}</div>
             <div class="small favorite-hint">اضغط لعرض مكانه الأصلي</div>
@@ -3540,6 +3535,7 @@ function kitHTML(name,url){
     return `
         <div class="kit">
             <button class="favorite-star ${favorite ? "is-favorite" : ""}"
+                data-favorite-name="${escapeAttr(name)}" data-favorite-url="${escapeAttr(url)}"
                 aria-label="${favorite ? "إزالة من المفضلة" : "إضافة للمفضلة"}"
                 title="${favorite ? "إزالة من المفضلة" : "إضافة للمفضلة"}"
                 onclick="toggleFavorite('${escapeAttr(name)}','${escapeAttr(url)}')">${favorite ? "★" : "☆"}</button>
