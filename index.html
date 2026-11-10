@@ -1820,7 +1820,7 @@ body.dark-mode .floating-search.open .search-popover{
         <button type="button" class="search-scope-btn active" data-search-scope="home">⌂ الـدوريـات</button>
         <button type="button" class="search-scope-btn" data-search-scope="countries">🌍 الـمنتـخبات </button>
     </div>
-    <input id="search" class="search-popover" type="search" placeholder="ابحث عن فريق أو منتخب أو دوري..." aria-label="البحث">
+    <input id="search" class="search-popover" type="search" placeholder="ابحث بالعربي أو بالإنجليزي عن نادي أو منتخب..." aria-label="البحث">
     <button id="searchToggle" type="button" aria-label="فتح البحث" title="بحث">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
     </button>
@@ -3714,12 +3714,9 @@ function renderCountries(filter=""){
             c =>
 
             (
-                c.name +
-                " " +
-                c.flag
+                matchesSearchName(c.name, q) ||
+                (c.name + " " + c.flag).toLowerCase().includes(q)
             )
-            .toLowerCase()
-            .includes(q)
 
         );
 
@@ -3766,7 +3763,7 @@ function renderCountries(filter=""){
             class="empty"
             style="grid-column:1/-1">
 
-            مفيش حاجة بالأسم ده..جرب بالأنجليزي .
+            مفيش نتيجة بالاسم ده. جرّب اسم تاني بالعربي أو بالإنجليزي.
 
         </div>
 
@@ -4093,103 +4090,112 @@ document
     });
 
 
-/* البحث */
+/* البحث العربي والإنجليزي في الدوريات والأندية والمنتخبات */
 let searchScope = "home";
 
-$("search")
-.addEventListener(
-    "input",
-    function(){
+// أسماء عربية وطرق كتابة شائعة للأندية والمنتخبات الموجودة في بيانات الموقع.
+const SEARCH_ALIASES = {
+    "Al Ahlay": ["الأهلي", "الاهلي", "أهلي", "اهلى", "al ahly", "alahly", "ahly"],
+    "Zamalk SC": ["الزمالك", "زمالك", "الزملكا", "zamalk", "zamalek"],
+    "Man United": ["مانشستر يونايتد", "مانشيستر يونايتد", "مان يونايتد", "مانشستر", "اليونايتد", "مانشستر يوناتيد", "manchester united", "man utd", "united"],
+    "Man City": ["مانشستر سيتي", "مانشيستر سيتي", "السيتي", "مان سيتي", "سيتي", "مانشستر سيتى", "manchester city", "city"],
+    "Liverpool": ["ليفربول", "ليڤربول", "ليفربول", "liverpool"],
+    "Arsenal": ["ارسنال", "أرسنال", "الارسنال", "arsenal"],
+    "Barcelona": ["برشلونة", "البارسا", "برشلونه", "barca", "barcelona"],
+    "Real Madrid": ["ريال مدريد", "الريال", "ريال", "real madrid"],
+    "AL Nassr": ["النصر", "نادي النصر", "العالمي", "al nassr", "al-nassr"],
+    "PSG": ["باريس", "باريس سان جيرمان", "سان جيرمان", "psg"],
+    " FC BAYERN": ["بايرن", "بايرن ميونخ", "بايرن ميونيخ", "bayern", "bayern munich"],
+    "ROMA": ["روما", "as roma", "roma"],
+    "Argentina": ["الأرجنتين", "الارجنتين", "ارجنتين", "argentina"],
+    "Portugal": ["البرتغال", "برتعال", "البرتعال", "برتغال", "portugal"],
+    "Brazil": ["البرازيل", "برازيـل", "البرازيل", "brazil"],
+    "Algeria": ["الجزائر", "جزائر", "المنتخب الجزائري", "algeria"],
+    "Egypt": ["مصر", "منتخب مصر", "الفراعنة", "egypt"],
+    "Morocco": ["المغرب", "مغربي", "المغرب", "morocco"],
+    "iraq": ["العراق", "منتخب العراق", "iraq"],
+    "Saudi Arabia": ["السعودية", "السعوديه", "السعودي", "saudi arabia"],
+    "Spain": ["اسبانيا", "إسبانيا", "المنتخب الاسباني", "spain"],
+    "Germany": ["ألمانيا", "المانيا", "المنتخب الألماني", "germany"],
+    "France": ["فرنسا", "المنتخب الفرنسي", "france"],
+    "Franca": ["فرنسا", "المنتخب الفرنسي", "france"],
+    "Kit Holland": ["هولندا", "الطواحين", "netherlands", "holland"],
+    "Kit America": ["امريكا", "أمريكا", "الولايات المتحدة", "usa", "united states"],
+    "Belgium": ["بلجيكا", "المنتخب البلجيكي", "belgium"],
+    "Croatia": ["كرواتيا", "croatia"],
+    "Colombia": ["كولومبيا", "colombia"],
+    "Mexico": ["المكسيك", "mexico"],
+    "Norway": ["النرويج", "norway"],
+    "Sweden": ["السويد", "sweden"],
+    "Uruguay": ["اوروجواي", "أوروجواي", "uruguay"],
+    "Senegal": ["السنغال", "senegal"],
+    "Qatar": ["قطر", "qatar"],
+    "Canada": ["كندا", "canada"],
+    "England": ["انجلترا", "إنجلترا", "الانجليز", "england"],
+    "Türkiye": ["تركيا", "المنتخب التركي", "turkey", "turkiye"],
+    "Netherlands": ["هولندا", "الطواحين", "netherlands", "holland"],
+    "Korea": ["كوريا", "كوريا الجنوبية", "korea"]
+};
 
-        const q =
-            this.value
-            .trim()
-            .toLowerCase();
+function normalizeSearchText(value){
+    return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/ؤ/g, "و")
+        .replace(/ئ/g, "ي")
+        .replace(/[^\u0600-\u06FFa-z0-9]+/g, " ")
+        .trim();
+}
 
+function matchesSearchName(name, query){
+    const q = normalizeSearchText(query);
+    if(!q) return true;
+    const canonical = normalizeSearchText(name);
+    if(canonical.includes(q)) return true;
+    const aliases = SEARCH_ALIASES[name] || [];
+    return aliases.some(alias => normalizeSearchText(alias).includes(q) || q.includes(normalizeSearchText(alias)));
+}
 
-        if(searchScope === "countries"){
-            renderCountries(q);
-            return;
-        }
+$("search").addEventListener("input", function(){
+    const q = this.value.trim();
 
-
-        if(!q){
-
-            renderLeagues();
-
-            return;
-
-        }
-
-
-        const leagueMatches =
-            leagues.filter(
-
-                l =>
-
-                l.name
-                .toLowerCase()
-                .includes(q)
-
-                ||
-
-                l.teams.some(
-
-                    t =>
-
-                    t.name
-                    .toLowerCase()
-                    .includes(q)
-
-                )
-
-            );
-
-
-        $("leagueList").innerHTML =
-
-            leagueMatches.length
-
-            ?
-
-            leagueMatches
-                .map(league => {
-                    const teamIndex = league.teams.findIndex(
-                        team => team.name.toLowerCase().includes(q)
-                    );
-
-                    // لو البحث باسم فريق، افتح الدوري ثم الفريق المطلوب مباشرة.
-                    if(teamIndex !== -1){
-                        const team = league.teams[teamIndex];
-                        return `
-                            <button class="card league-card" onclick="openLeague('${league.id}');openTeam(${teamIndex})">
-                                <span class="league-icon">${league.icon}</span>
-                                <strong>${team.name}</strong>
-                                <span class="small">داخل ${league.name}</span>
-                            </button>
-                        `;
-                    }
-
-                    return leagueCard(league);
-                })
-                .join("")
-
-            :
-
-            `
-
-            <div
-                class="empty"
-                style="grid-column:1/-1">
-
-                 مفيش حاجة بالاسم ده جرب بالانجليزي.
-
-            </div>
-
-            `;
-
+    if(searchScope === "countries"){
+        renderCountries(q);
+        return;
     }
-);
+
+    if(!q){
+        renderLeagues();
+        return;
+    }
+
+    const leagueMatches = leagues.filter(league =>
+        matchesSearchName(league.name, q) ||
+        league.teams.some(team => matchesSearchName(team.name, q))
+    );
+
+    $("leagueList").innerHTML = leagueMatches.length
+        ? leagueMatches.map(league => {
+            const teamIndex = league.teams.findIndex(team => matchesSearchName(team.name, q));
+            // لو البحث باسم فريق، افتح الدوري ثم الفريق المطلوب مباشرة.
+            if(teamIndex !== -1){
+                const team = league.teams[teamIndex];
+                return `
+                    <button class="card league-card" onclick="openLeague('${league.id}');openTeam(${teamIndex})">
+                        <span class="league-icon">${league.icon}</span>
+                        <strong>${team.name}</strong>
+                        <span class="small">داخل ${league.name}</span>
+                    </button>
+                `;
+            }
+            return leagueCard(league);
+        }).join("")
+        : `<div class="empty" style="grid-column:1/-1">مفيش نتيجة بالاسم ده. جرّب اسم تاني بالعربي أو بالإنجليزي.</div>`;
+});
 
 
 
@@ -4501,6 +4507,15 @@ restoreFavoritesFromDB();
       searchScope = $("countries").classList.contains("active") ? "countries" : "home";
       updateScopeButtons();
       field.focus();
+      // انزل تلقائياً لمكان نتائج البحث بدل ما يفضل المستخدم أعلى الصفحة.
+      setTimeout(() => {
+        const list = $(searchScope === "countries" ? "countryList" : "leagueList");
+        if(list){
+          const target = searchScope === "home" ? list.previousElementSibling : list.previousElementSibling;
+          const top = target.getBoundingClientRect().top + window.pageYOffset - 105;
+          window.scrollTo({top: Math.max(0, top), behavior: "smooth"});
+        }
+      }, 120);
     } else {
       field.value="";
       field.dispatchEvent(new Event("input",{bubbles:true}));
@@ -4522,6 +4537,13 @@ restoreFavoritesFromDB();
       }
       updateScopeButtons();
       field.focus();
+      setTimeout(() => {
+        const list = $(searchScope === "countries" ? "countryList" : "leagueList");
+        if(list){
+          const top = list.getBoundingClientRect().top + window.pageYOffset - 105;
+          window.scrollTo({top: Math.max(0, top), behavior: "smooth"});
+        }
+      }, 80);
     });
   });
 
