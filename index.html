@@ -186,6 +186,7 @@ main{
 }
 
 .league-card{
+    position:relative;
     text-align:center;
     min-height:115px;
     display:flex;
@@ -198,7 +199,43 @@ main{
     font-size:35px;
 }
 
+.new-badge{
+    position:absolute;
+    top:9px;
+    right:9px;
+    z-index:3;
+    pointer-events:none;
+}
+
+.new-badge-text{
+    padding:4px 9px;
+    border-radius:20px;
+    color:#fff;
+    background:linear-gradient(135deg,#18a957,#087b3b);
+    font-size:11px;
+    font-weight:800;
+    line-height:1;
+    box-shadow:0 2px 9px rgba(15,150,75,.32);
+}
+
+.live-badge{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#ff2638;
+    box-shadow:0 0 5px 2px rgba(255,38,56,.72), 0 0 13px 4px rgba(255,38,56,.42);
+    animation:liveDotPulse 1.45s ease-in-out infinite;
+}
+
+@keyframes liveDotPulse{
+    0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 5px 2px rgba(255,38,56,.72),0 0 13px 4px rgba(255,38,56,.42)}
+    50%{opacity:.72;transform:scale(.82);box-shadow:0 0 3px 1px rgba(255,38,56,.62),0 0 8px 2px rgba(255,38,56,.3)}
+}
+
+@media(prefers-reduced-motion:reduce){.live-badge{animation:none}}
+
 .team-card{
+    position:relative;
     display:flex;
     align-items:center;
     gap:10px;
@@ -2122,12 +2159,25 @@ const leagues = [
                     "الحارس 3",
                     "https://up6.cc/2026/09/178872006334851.png"
                 ]
+                 
+               ]
 
-            ]
+           },
+         
+         {
+            name:"( Borussia Dortmund ) جاري صنع و سيتم تنزيله قريبا تابع قناة التلجرام من صفحة من نحن لكل جديد",
+             
+            arabicName:"ابروسيا دورتموند",
+             
+            logo:
+            "https://up6.cc/2026/11/179476519734861.png",
+            kits:[
+           ]
         }
 
     ]
 },
+
 
 
 /* =========================
@@ -3340,6 +3390,33 @@ function backToLeague(){
 }
 
 
+/* =====================================================
+   إعدادات النقطة الحمراء المضيئة — عدّل هذا الجزء فقط للتحكم في مكان ظهورها.
+   targetType: "league" لعرضها على كارت دوري، أو "team" على كارت فريق.
+   leagueId: معرّف الدوري كما هو مكتوب في بيانات leagues (مثال: spanish).
+   teamName: اسم الفريق كما هو مكتوب في name داخل بيانات الفريق.
+   لإضافة علامة في مكان آخر، أضف سطراً جديداً داخل NEW_BADGE_LOCATIONS.
+===================================================== */
+const NEW_BADGE_LOCATIONS = [
+    { targetType:"league", leagueId:"spanish", teamName:"", badgeType:"new" },
+    { targetType:"league", leagueId:"german", teamName:"", badgeType:"live" }
+     
+];
+
+function getNewBadge(targetType, leagueId, teamName=""){
+    const item = NEW_BADGE_LOCATIONS.find(item =>
+        item.targetType === targetType &&
+        item.leagueId === leagueId &&
+        (targetType !== "team" || item.teamName.trim().toLowerCase() === teamName.trim().toLowerCase())
+    );
+    if(!item) return "";
+    if(item.badgeType === "live"){
+        return '<span class="new-badge live-badge" aria-label="LIVE" title="LIVE"></span>';
+    }
+    return '<span class="new-badge new-badge-text" aria-label="جديد" title="جديد">جديد</span>';
+}
+
+
 /* إنشاء كارت الدوري */
 
 function leagueCard(league){
@@ -3349,6 +3426,8 @@ function leagueCard(league){
     <button
         class="card league-card"
         onclick="openLeague('${league.id}')">
+
+        ${getNewBadge("league", league.id)}
 
         <span class="league-icon">
             ${league.icon}
@@ -3449,6 +3528,8 @@ function openLeague(id){
             <button
                 class="card team-card"
                 onclick="openTeam(${i})">
+
+                ${getNewBadge("team", league.id, team.name)}
 
                 ${
                     team.logo
