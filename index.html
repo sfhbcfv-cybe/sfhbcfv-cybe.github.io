@@ -1134,6 +1134,31 @@ body.dark-mode .floating-search.open .search-popover{
 @media(max-width:480px){.youtube-channel-banner{gap:11px;min-height:128px;padding:17px 13px;border-radius:21px}.youtube-banner-icon{flex-basis:52px;width:52px;height:52px;border-radius:17px}.youtube-banner-icon svg{width:31px;height:31px}.youtube-banner-copy strong{font-size:17px}.youtube-banner-copy span{font-size:11px}.youtube-banner-cta{padding:10px 11px;font-size:11px}}
 @media(prefers-reduced-motion:reduce){.youtube-channel-banner:after{animation:none}}
 
+
+/* ===== بانرات تيليجرام وتيك توك بنفس تصميم بانر يوتيوب ===== */
+.social-channel-banner{
+    position:relative;isolation:isolate;display:flex;align-items:center;gap:16px;
+    width:100%;min-height:142px;margin:18px 0;padding:22px 20px;
+    overflow:hidden;text-decoration:none;color:#fff;border-radius:25px;
+    border:1px solid rgba(255,255,255,.25);
+    box-shadow:0 14px 34px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.22);
+    transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+.social-channel-banner:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.72);box-shadow:0 18px 38px rgba(0,0,0,.25)}
+.social-channel-banner:active{transform:scale(.99)}
+.social-channel-banner:after{content:"";position:absolute;z-index:-1;top:-65%;bottom:-65%;left:-30%;width:18%;transform:rotate(22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:youtubeBannerShine 5s ease-in-out infinite;pointer-events:none}
+.telegram-channel-banner{background:radial-gradient(ellipse at 5% 0%,rgba(255,255,255,.19),transparent 42%),linear-gradient(115deg,#087eb5,#24a1dc 52%,#07577e)}
+.tiktok-channel-banner{background:radial-gradient(ellipse at 5% 0%,rgba(255,255,255,.16),transparent 42%),linear-gradient(115deg,#111,#252525 55%,#050505);border-color:rgba(37,244,238,.35)}
+.social-banner-icon{flex:0 0 66px;width:66px;height:66px;display:grid;place-items:center;border-radius:21px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.27);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 7px 18px rgba(0,0,0,.16)}
+.social-banner-icon svg{width:38px;height:38px;fill:#fff}
+.social-banner-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:7px}
+.social-banner-copy strong{font-size:clamp(18px,3.5vw,23px);font-weight:900;line-height:1.35}
+.social-banner-copy span{font-size:13px;line-height:1.7;color:rgba(255,255,255,.88)}
+.social-banner-cta{flex-shrink:0;padding:11px 15px;border-radius:14px;background:#fff;color:#087eb5;font-size:13px;font-weight:900;white-space:nowrap;box-shadow:0 5px 15px rgba(0,0,0,.17)}
+.tiktok-channel-banner .social-banner-cta{color:#111}
+@media(max-width:480px){.social-channel-banner{gap:11px;min-height:128px;padding:17px 13px;border-radius:21px}.social-banner-icon{flex-basis:52px;width:52px;height:52px;border-radius:17px}.social-banner-icon svg{width:31px;height:31px}.social-banner-copy strong{font-size:17px}.social-banner-copy span{font-size:11px}.social-banner-cta{padding:10px 11px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.social-channel-banner:after{animation:none}}
+
 </style>
 </head>
 
@@ -1282,15 +1307,41 @@ body.dark-mode .floating-search.open .search-popover{
     </div>
 
     <!-- بانر قناة يوتيوب - يظهر قبل إعلان Google AdSense -->
-    <a class="youtube-channel-banner" href="https://youtube.com/@abo.7med.73?si=QOQo7pkEuuJaFyWo" target="_blank" rel="noopener noreferrer" aria-label="زيارة قناة Abo.HMED.G على يوتيوب">
+    <a class="youtube-channel-banner" href="https://youtube.com/@abo.7med.73?si=QOQo7pkEuuJaFyWo" target="_blank" rel="noopener noreferrer" aria-label="زيارة قناة Abo.7MED.G على يوتيوب">
         <span class="youtube-banner-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
         </span>
         <span class="youtube-banner-copy">
-            <strong>اشترك في قناة Abo.HMED.G</strong>
+            <strong>اشترك في قناة Abo.7MED.G</strong>
             <span>تابع أحدث الأطقم والإضافات وكل جديد على قناتنا في يوتيوب ⚽</span>
         </span>
         <span class="youtube-banner-cta">اشترك الآن ←</span>
+    </a>
+
+
+
+    <!-- بانر قناة تيليجرام -->
+    <a class="social-channel-banner telegram-channel-banner" href="https://t.me/KitDlsStar" target="_blank" rel="noopener noreferrer" aria-label="الانتقال إلى قناة Abo.7MED.G على تيليجرام">
+        <span class="social-banner-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M21.9 3.2 18.6 20c-.25 1.18-.93 1.47-1.88.92l-5.2-3.83-2.51 2.42c-.28.28-.52.52-1.06.52l.38-5.3 9.65-8.72c.42-.38-.09-.59-.65-.21L5.4 13.36.28 11.76c-1.11-.35-1.13-1.11.23-1.65L20.54 2.3c.92-.34 1.73.22 1.36.9Z"/></svg>
+        </span>
+        <span class="social-banner-copy">
+            <strong>انضم إلى قناة Abo.7MED.G على تيليجرام</strong>
+            <span>تابع جديد الأطقم والتحديثات أولًا بأول على قناتنا ⚽</span>
+        </span>
+        <span class="social-banner-cta">انضم الآن ←</span>
+    </a>
+
+    <!-- بانر حساب تيك توك -->
+    <a class="social-channel-banner tiktok-channel-banner" href="https://www.tiktok.com/@kit_spor_dls.26?_r=1&amp;_t=ZS-9BS62YYMxlN" target="_blank" rel="noopener noreferrer" aria-label="زيارة حساب Abo.7MED.G على تيك توك">
+        <span class="social-banner-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M19.6 6.2a5.7 5.7 0 0 1-3.5-1.2V15a6.2 6.2 0 1 1-6.2-6.2c.4 0 .8 0 1.2.1v3.4a2.9 2.9 0 1 0 2 2.7V2h3.4c.2 2 1.4 3.6 3.1 4.2v3.5Z"/></svg>
+        </span>
+        <span class="social-banner-copy">
+            <strong>تابع Abo.7MED.G على تيك توك</strong>
+            <span>شوف أحدث فيديوهات الأطقم وكل جديد على حسابنا 🎥</span>
+        </span>
+        <span class="social-banner-cta">تابع الآن ←</span>
     </a>
 
     <!-- إعلان Google AdSense: وحدة إعلانية مرنة -->
