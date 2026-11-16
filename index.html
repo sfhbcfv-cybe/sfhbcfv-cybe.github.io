@@ -1104,6 +1104,36 @@ body.dark-mode .floating-search.open .search-popover{
 .privacy-content a{color:#c28a00;text-decoration:underline;overflow-wrap:anywhere}
 .privacy-back{display:block;width:100%;margin:0 auto 14px;padding:12px 16px;border:0;border-radius:16px;background:linear-gradient(90deg,rgba(255,208,0,.28),rgba(229,57,53,.18));color:var(--text);font-weight:800;font-size:15px}
 
+
+/* ===== بانر قناة يوتيوب قبل الإعلانات ===== */
+.youtube-channel-banner{
+    position:relative;isolation:isolate;display:flex;align-items:center;gap:16px;
+    width:100%;min-height:142px;margin:22px 0 18px;padding:22px 20px;
+    overflow:hidden;text-decoration:none;color:#fff;border-radius:25px;
+    border:1px solid rgba(255,75,75,.48);
+    background:radial-gradient(ellipse at 5% 0%,rgba(255,255,255,.17),transparent 42%),
+      linear-gradient(115deg,rgba(190,0,0,.96),rgba(232,25,25,.91) 48%,rgba(75,8,8,.96));
+    box-shadow:0 14px 34px rgba(180,0,0,.22),inset 0 1px 0 rgba(255,255,255,.24);
+    transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+.youtube-channel-banner:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.72);box-shadow:0 18px 38px rgba(180,0,0,.3),0 0 22px rgba(255,30,30,.16)}
+.youtube-channel-banner:active{transform:scale(.99)}
+.youtube-banner-icon{flex:0 0 66px;width:66px;height:66px;display:grid;place-items:center;border-radius:21px;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.27);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 7px 18px rgba(0,0,0,.16)}
+.youtube-banner-icon svg{width:38px;height:38px;fill:#fff}
+.youtube-banner-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:7px}
+.youtube-banner-copy strong{font-size:clamp(18px,3.5vw,23px);font-weight:900;line-height:1.35}
+.youtube-banner-copy span{font-size:13px;line-height:1.7;color:rgba(255,255,255,.88)}
+.youtube-banner-cta{flex-shrink:0;padding:11px 15px;border-radius:14px;background:#fff;color:#c90000;
+    font-size:13px;font-weight:900;white-space:nowrap;box-shadow:0 5px 15px rgba(0,0,0,.17)}
+.youtube-channel-banner:after{content:"";position:absolute;z-index:-1;top:-65%;bottom:-65%;left:-30%;width:18%;
+    transform:rotate(22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+    animation:youtubeBannerShine 5s ease-in-out infinite;pointer-events:none}
+@keyframes youtubeBannerShine{0%,65%{left:-30%;opacity:0}73%{opacity:1}95%,100%{left:125%;opacity:0}}
+@media(max-width:480px){.youtube-channel-banner{gap:11px;min-height:128px;padding:17px 13px;border-radius:21px}.youtube-banner-icon{flex-basis:52px;width:52px;height:52px;border-radius:17px}.youtube-banner-icon svg{width:31px;height:31px}.youtube-banner-copy strong{font-size:17px}.youtube-banner-copy span{font-size:11px}.youtube-banner-cta{padding:10px 11px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.youtube-channel-banner:after{animation:none}}
+
 </style>
 </head>
 
@@ -1250,6 +1280,18 @@ body.dark-mode .floating-search.open .search-popover{
         </div>
 
     </div>
+
+    <!-- بانر قناة يوتيوب - يظهر قبل إعلان Google AdSense -->
+    <a class="youtube-channel-banner" href="https://youtube.com/@abo.7med.73?si=QOQo7pkEuuJaFyWo" target="_blank" rel="noopener noreferrer" aria-label="زيارة قناة Abo.HMED.G على يوتيوب">
+        <span class="youtube-banner-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
+        </span>
+        <span class="youtube-banner-copy">
+            <strong>اشترك في قناة Abo.HMED.G</strong>
+            <span>تابع أحدث الأطقم والإضافات وكل جديد على قناتنا في يوتيوب ⚽</span>
+        </span>
+        <span class="youtube-banner-cta">اشترك الآن ←</span>
+    </a>
 
     <!-- إعلان Google AdSense: وحدة إعلانية مرنة -->
     <div class="adsense-container" style="width:100%;max-width:100%;margin:18px auto 22px;overflow:hidden;text-align:center;">
